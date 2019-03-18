@@ -1,0 +1,11 @@
+package util;
+
+public class Lerp <V extends Vectorizable<V>> {
+/**
+ * Lineatní interpolace
+ * */
+
+    public V lerp (V a, V b, double t){  //Generická třída, kteá říká že V musí dědit z Vectorizable
+        return a.mul(1-t).add(b.mul(t));
+    }
+}
