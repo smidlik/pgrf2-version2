@@ -1,6 +1,5 @@
 package model;
 
-import transforms.Mat4;
 import transforms.Mat4Identity;
 
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ public abstract class Solid {
     protected List<Integer> indexBuffer;
     protected List<Part> parts;
 
-    public Solid(){
+    public Solid() {
         vertexBuffer = new ArrayList<>();
         indexBuffer = new ArrayList<>();
         parts = new ArrayList<>();

@@ -4,11 +4,12 @@ import transforms.Col;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 public class Visibility {
 
     private ImgBuffer imgBuffer;
-    private ZBuffer<Float> zBuffer;
+    private ZBuffer zBuffer;
     private int backgroundColor = Color.BLACK.getRGB();
     private int width;
     private int heigth;
@@ -17,29 +18,44 @@ public class Visibility {
         this.heigth = heigth;
         this.width = width;
         this.imgBuffer = new ImgBuffer(width, heigth);
-        this.zBuffer = new ZBuffer<Float>(width, heigth);
-        init(backgroundColor);
+        this.zBuffer = new ZBuffer(width, heigth);
+        clear();
     }
 
-    public void put(int x, int y, float z, Col color) {
-        if (z < zBuffer.get(x, y)) {
+    public void put(int x, int y, double z, Col color) {
+        Optional<Double> zValue = zBuffer.get(x, y);
+
+        if (!zValue.isPresent()) {
+            return;
+        }
+        if (z < zValue.get() && z >= 0) {
             imgBuffer.set(x, y, color.getRGB());
             zBuffer.set(x, y, z);
         }
     }
 
-    public void init(int color) {
-        //*
-        for (int i = 0; i < imgBuffer.getHeight(); i++) {
-            for (int j = 0; j < imgBuffer.getWidth(); j++) {
-                zBuffer.set(j,i,1f); //místo 1f je správně: new Float(1)
+    public void clear() {
+        for (int i = 0; i < heigth; i++) {
+            for (int j = 0; j < width; j++) {
+                zBuffer.set(j, i, 1.0); //místo 1f je správně: new Float(1)
             }
         }
-
-        imgBuffer.clear(color);
     }
+
 
     public BufferedImage getBufferedImage() {
         return imgBuffer.getImg();
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeigth() {
+        return heigth;
+    }
+
+    public int getBackgroundColor() {
+        return backgroundColor;
     }
 }

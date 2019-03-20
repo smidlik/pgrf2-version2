@@ -8,14 +8,14 @@ import java.awt.*;
 public class Vertex implements Vectorizable<Vertex> {
 
 
-    //Pozice
-    private final Point3D position;
     //BARVA
     private final Col color;
     //Normálový vektor
     private final Vec3D normalVec;
     // Textury
     private final Vec2D texUV;
+    //Pozice
+    private Point3D position;
     private double one;
 
 
@@ -25,6 +25,7 @@ public class Vertex implements Vectorizable<Vertex> {
         this.normalVec = new Vec3D(0, 0, -1);
         this.texUV = new Vec2D(0, 0);
     }
+
     public Vertex(Point3D point3D, Col color) {
         this.position = point3D;
         this.color = color;
@@ -54,46 +55,34 @@ public class Vertex implements Vectorizable<Vertex> {
         this.texUV = texUV;
     }
 
-
     public Col getColor() {
         return color;
     }
-
 
     public Point3D getPosition() {
         return position;
     }
 
+    public void setPosition(Point3D position) {
+        this.position = position;
+    }
+
     @Override
     public Vertex mul(double t) {
-        Vertex calculation = new Vertex(new Point3D(
-                position.getX() * t,
-                position.getY() * t,
-                position.getZ() * t),
-                this.color,
-                this.normalVec,
-                this.texUV);
-        return calculation;
+        return new Vertex(getPosition().mul(t), getColor() == null ? null : getColor().mul(t), getNormalVec().mul(t),
+                getTexUV().mul(t), one * t);
     }
 
     public Vertex mul(Mat4 matrix) {
-        Point3D point = this.position.mul(matrix);
-        Vertex newVertex = new Vertex(point, this.color, this.normalVec, this.texUV);
-        return newVertex;
+        return new Vertex(position.mul(matrix), this.color, this.normalVec, this.texUV);
     }
 
 
     @Override
-    public Vertex add(Vertex a) {
-        Vertex calculation = new Vertex(
-                new Point3D(
-                        position.getX() + a.getPosition().getX(),
-                        position.getY() + a.getPosition().getY(),
-                        position.getY() + a.getPosition().getZ()),
-                this.color,
-                this.normalVec,
-                this.texUV);
-        return calculation;
+    public Vertex add(Vertex b) {
+        return new Vertex(getPosition().add(b.getPosition()),
+                getColor() == null || b.getColor() == null ? null : getColor().add(b.getColor()),
+                getNormalVec().add(b.getNormalVec()), getTexUV().add(b.getTexUV()), one * b.getOne());
     }
 
     public Vertex dehomog() {
